@@ -23,7 +23,7 @@ import com.bikeshare.model.BikeType;
  */
 @DisplayName("Beginner's First Tests - Start Here!")
 class BeginnerFirstTest {
-
+    
     /**
      * The simplest possible test - just checks if 1 equals 1
      * This always passes and shows you the basic structure
@@ -33,7 +33,7 @@ class BeginnerFirstTest {
     void myVeryFirstTest() {
         // TODO: Write a simple test that always passes
         // HINT: Use assertEquals(1, 1) to check if 1 equals 1
-        
+        assertEquals(1, 1);
         // Congratulations! You just saw your first passing test! 🎉
     }
 
@@ -50,26 +50,28 @@ class BeginnerFirstTest {
         
         // ACT: Do the thing you want to test
         // TODO: Create actualMessage variable with the same value
+        assertNotNull(expectedMessage);
         
         // ASSERT: Check if it worked correctly
         // TODO: Use assertEquals to compare expectedMessage and actualMessage
-        
+        assertEquals(expectedMessage, "Hello, Testing!");
         // That's the basic pattern: Arrange, Act, Assert!
     }
+    
 
     /**
      * Test basic BikeType functionality - very simple
      */
     @Test
     @DisplayName("Test bike types - simple version")
-    void testBikeTypesSimple() {
+    void testBikeTypesSimple() {     
         // TODO: Test BikeType.STANDARD
         // ARRANGE: Get a bike type using BikeType.STANDARD
-        
+        BikeType standardBike = BikeType.STANDARD;
         // ACT: Get its display name using getDisplayName()
-        
+        String displayName = standardBike.getDisplayName();
         // ASSERT: Check if it equals "Standard Bike"
-        
+        assertEquals("Standard Bike", displayName);
         // Try this: Change "Standard Bike" to something else and see the test fail!
     }
 
@@ -77,11 +79,15 @@ class BeginnerFirstTest {
      * Test that shows different types of assertions
      */
     @Test
-    @DisplayName("Learn different assertions")
+    @DisplayName("Learn different assertions") 
     void learnDifferentAssertions() {
         BikeType electricBike = BikeType.ELECTRIC;
         
         // TODO: Try different assertion methods:
+        assertEquals("Electric Bike", electricBike.getDisplayName());
+        assertTrue(electricBike.getPricePerMinute() > 0);
+        assertNotNull(electricBike);
+        assertSame(BikeType.ELECTRIC, electricBike);
         // - assertEquals: Check if two things are equal
         // - assertTrue: Check if something is true
         // - assertNotNull: Check if something is not null
@@ -100,10 +106,11 @@ class BeginnerFirstTest {
     void exampleFailingTest() {
         // TODO: Write a test that passes first
         // Then uncomment a line that will fail to see what happens
-        
+        String hello = "Hello, World!";
+        assertEquals("Hello, World!", hello);
         // For now, let's make it pass:
         // assertEquals("This will pass", "This will pass");
-        
+            
         // Exercise: Try making a test that fails on purpose
         // and read the error message to understand what went wrong
     }
@@ -115,13 +122,22 @@ class BeginnerFirstTest {
     @DisplayName("Practice with different bike types")
     void practiceWithDifferentBikeTypes() {
         // TODO: Test different bike types:
-        
+        BikeType standardBike = BikeType.STANDARD;
+        if (standardBike.getDisplayName().equals("Standard Bike") && standardBike.getPricePerMinute() == 0.50) {
+            assertTrue(true);
+        } else {
+            assertTrue(false, "Standard bike values are incorrect");
+        }
         // Test standard bike
         // HINT: BikeType.STANDARD should have display name "Standard Bike" and price 0.50
-        
+        BikeType electricBike = BikeType.ELECTRIC;
         // Test electric bike  
         // HINT: BikeType.ELECTRIC should have display name "Electric Bike" and price 1.00
-        
+        if (electricBike.getDisplayName().equals("Electric Bike") && electricBike.getPricePerMinute() == 1.00) {
+            assertTrue(true);
+        } else {
+            assertTrue(false, "Electric bike values are incorrect");
+        }
         // TODO: Can you figure out the mountain and cargo bike values?
         
     }
@@ -133,10 +149,11 @@ class BeginnerFirstTest {
     @DisplayName("Understanding expected vs actual")
     void understandExpectedVsActual() {
         BikeType mountainBike = BikeType.MOUNTAIN;
-        
         // In assertEquals(expected, actual):
         // - First parameter: what you EXPECT the result to be
         // - Second parameter: what the code ACTUALLY returns
+        assertEquals(mountainBike, mountainBike);
+        assertEquals(mountainBike, mountainBike);
         
         // TODO: Create expected and actual variables
         // TODO: Use assertEquals to compare them
@@ -150,6 +167,9 @@ class BeginnerFirstTest {
     @Test
     @DisplayName("🎯 CHALLENGE: Complete this test yourself!")
     void yourFirstChallenge() {
+        BikeType cargoBike = BikeType.CARGO;
+        assertEquals("Cargo Bike", cargoBike.getDisplayName());
+        assertEquals(1.20, cargoBike.getPricePerMinute());
         // Challenge: Test the CARGO bike type
         // 1. Get a CARGO bike type
         // 2. Check that its display name is "Cargo Bike"

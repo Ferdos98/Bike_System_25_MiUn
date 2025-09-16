@@ -8,7 +8,8 @@ public enum BikeType {
     ELECTRIC("Electric Bike", 1.00);
     
     private final String description;
-    private final double pricePerMinute;ystem follows a layered architecture pattern designed for maintainability, testability, and separation of concerns. This guide explains the architectural decisions and patterns used throughout the codebase.
+    private final double pricePerMinute;ystem follows a layered architecture pattern designed for maintainability, testability, and separation of concerns. This guide explains the architectural decisions and patterns used throughout the codebase.}
+    
 
 ### 1.1 Architecture Layers
 
