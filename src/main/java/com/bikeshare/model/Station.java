@@ -15,7 +15,7 @@ public class Station {
     public enum StationStatus {
         ACTIVE,
         MAINTENANCE,
-        INACTIVE,
+        INACTIVE,       
         FULL,
         EMPTY
     }
