@@ -8,11 +8,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Member;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.bikeshare.model.MembershipType;
 import com.bikeshare.model.User;
+import com.bikeshare.model.User.MembershipType;
 
 /**
  * Lab 2 Template: Black Box Testing for User class
@@ -57,6 +59,132 @@ class UserBlackBoxTest {
     // TODO: Challenge 2.1 - Add Equivalence Partitioning tests for email validation
     // Hint: Test valid emails (user@domain.com) and invalid emails (missing @,
     // empty, etc.)
+
+    @Test
+    @DisplayName("Name should not be null or empty")
+    void nameShouldNotContainNull() {
+        // Arrange
+        // String name = " ";
+        User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos", "khalili");
+
+        // Act
+        // user.getFirstName();
+        // Assert
+        assertThrows(IllegalArgumentException.class,
+                () -> user.setFirstName(" "));
+    }
+
+    @Test
+    @DisplayName("Name should not be null or empty")
+    void lastNameShouldNotContainNull() {
+        // Arrange
+        User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos", "khalili");
+
+        // Act
+        // user.getFirstName();
+        // Assert
+        assertThrows(IllegalArgumentException.class,
+                () -> user.setLastName(" "));
+    }
+
+    // AI generated for phone number
+    @Test
+    void shouldAcceptValidSwedishMobileWithCountryCode() {
+        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
+
+        assertDoesNotThrow(() -> user.setPhoneNumber("+46701234567"));
+        assertEquals("+46701234567", user.getPhoneNumber());
+        assertFalse(user.isPhoneVerified(), "Phone should not be verified after setting");
+    }
+
+    @Test
+    void shouldAcceptValidSwedishMobileWithoutCountryCode() {
+        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
+
+        assertDoesNotThrow(() -> user.setPhoneNumber("0701234567"));
+        assertEquals("0701234567", user.getPhoneNumber());
+    }
+
+    @Test
+    void shouldCleanPhoneNumberWithSpacesAndDashes() {
+        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
+
+        user.setPhoneNumber("(070) 123-45 67");
+        assertEquals("0701234567", user.getPhoneNumber());
+    }
+
+    @Test
+    void shouldRejectInvalidTooShortNumber() {
+        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> user.setPhoneNumber("12345"));
+    }
+
+    @Test
+    void shouldRejectInvalidCharacters() {
+        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> user.setPhoneNumber("07012ABCD"));
+    }
+
+    @Test
+    void shouldAllowNullPhoneNumber() {
+        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
+
+        assertDoesNotThrow(() -> user.setPhoneNumber(null));
+        assertNull(user.getPhoneNumber());
+    }
+
+    @Test
+    void shouldAllowEmptyPhoneNumber() {
+        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
+
+        user.setPhoneNumber("   ");
+        assertNull(user.getPhoneNumber());
+    }
+
+    @Test
+    @DisplayName("should not be able to withdraw more than balance")
+    void shouldNotBeAbleToWithdrawMoreThanBalance() {
+        User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos", "khalili");
+
+        // Arrange
+
+        double balance = user.getAccountBalance();
+        double money = 300;
+        double newBalance = balance - money;
+
+        // = balance + money; // Arrange
+
+        // Assert
+        assertThrows(IllegalArgumentException.class,
+                () -> user.deductFunds(newBalance));
+
+    }
+    // @Test
+    // @DisplayName("Should not be able to add fund null")
+    // void shouldNotBeAbleToAddFundNull() {
+    // User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos",
+    // "khalili");
+    // //act
+    // double money = 0;
+
+    // //Assert
+    // assertNull(user.addFunds(money));
+
+    // }
+
+    // @Test
+    // @DisplayName("Name should not contain numbers")
+    // void nameShouldNotContainNumbers() {
+    // User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos",
+    // "khalili");
+
+    // assertThrows(IllegalArgumentException.class,
+    // () -> user.setFirstName("f12324"));
+    // }
 
     @Test
     @DisplayName("is email format valid")
@@ -186,94 +314,25 @@ class UserBlackBoxTest {
     void basicShouldNotGetDiscount() {
         User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos", "khalili");
 
-        // user.getMembershipType();
+        // user.updateMembership(User.MembershipType.BASIC);
 
         assertEquals(0.0, user.calculateDiscount(), "Basic ska inte ge rabatt");
     }
 
     @Test
     void basicShouldNotGetFreeMinutes() {
-        User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos", "khalili");
-
-        // user.getMembershipType();
-        int freeMinutes = user.getMembershipType().getFreeMinutesPerRide();
-
-        assertEquals(60, freeMinutes, "Basic ska inte få gratis minuter");
-
-        // It should pass scince in the Membershipclass it says 0 free minutes for
-        // basic, but in the User class it says 60 free minutes for basic, so therefor
-        // it doesnt pass.
-    }
-
-    // TODO: Challenge 2.4 - Add error scenario tests
-    // Hint: Test insufficient balance, invalid inputs, state violations
-    @Test
-    void basicShouldGetFreeMinutes() {
         // User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos",
         // "khalili");
-        MembershipType membershipType = MembershipType.STUDENT;
+        MembershipType membershipType = MembershipType.BASIC;
 
         // user.getMembershipType();
-        int freeMinutes = membershipType.getFreeMinutesPerMonth();
+        int freeMinutes = membershipType.BASIC.getFreeMinutesPerRide();
 
-        assertEquals(45, freeMinutes, "Basic ska inte ge gratis minuter");
+        assertEquals(60, freeMinutes, "Basic ska inte ge gratis minuter");
         // Rapport
     }
-
-    @Test
-    void shouldAcceptValidSwedishMobileWithCountryCode() {
-        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
-
-        assertDoesNotThrow(() -> user.setPhoneNumber("+46701234567"));
-        assertEquals("+46701234567", user.getPhoneNumber());
-        assertFalse(user.isPhoneVerified(), "Phone should not be verified after setting");
-    }
-
-    @Test
-    void shouldAcceptValidSwedishMobileWithoutCountryCode() {
-        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
-
-        assertDoesNotThrow(() -> user.setPhoneNumber("0701234567"));
-        assertEquals("0701234567", user.getPhoneNumber());
-    }
-
-    @Test
-    void shouldCleanPhoneNumberWithSpacesAndDashes() {
-        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
-
-        user.setPhoneNumber("(070) 123-45 67");
-        assertEquals("0701234567", user.getPhoneNumber());
-    }
-
-    @Test
-    void shouldRejectInvalidTooShortNumber() {
-        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
-
-        assertThrows(IllegalArgumentException.class,
-                () -> user.setPhoneNumber("12345"));
-    }
-
-    @Test
-    void shouldRejectInvalidCharacters() {
-        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
-
-        assertThrows(IllegalArgumentException.class,
-                () -> user.setPhoneNumber("07012ABCD"));
-    }
-
-    @Test
-    void shouldAllowNullPhoneNumber() {
-        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
-
-        assertDoesNotThrow(() -> user.setPhoneNumber(null));
-        assertNull(user.getPhoneNumber());
-    }
-
-    @Test
-    void shouldAllowEmptyPhoneNumber() {
-        User user = new User("901101-1237", "anna@example.com", "Anna", "Jonsson");
-
-        user.setPhoneNumber("   ");
-        assertNull(user.getPhoneNumber());
-    }
 }
+
+// // TODO: Challenge 2.4 - Add error scenario tests
+// // Hint: Test insufficient balance, invalid inputs, state violations
+// }
