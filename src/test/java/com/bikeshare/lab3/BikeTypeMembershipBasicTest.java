@@ -5,6 +5,8 @@ import com.bikeshare.model.User;
 import com.bikeshare.model.MembershipType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -147,13 +149,13 @@ public class BikeTypeMembershipBasicTest {
     // Hint: Test rides that are exactly the same length as free minutes, rides just
     // over free minutes
     @Test
-    @DisplayName("Should calculate cost for a ride with BASIC membership and STANDARD bike")
-    void edgeCasesCalculateCostForRideWithBasicMembership() {
+    @DisplayName("Should calculate cost for a ride with VIP membership and STANDARD bike")
+    void edgeCasesCalculateCostForRideWithVipMembership() {
         // Arrange - Set up test data
-        MembershipType basicMembership = MembershipType.BASIC;
+        MembershipType basicMembership = MembershipType.VIP;
         // User.MembershipType premiumMembership = User.MembershipType.PREMIUM;
         BikeType standardBike = BikeType.STANDARD;
-        int exactFreeRideMinutes = 60; //
+        int exactFreeRideMinutes = 120; //
 
         // Act - Calculate cost using both classes
         int freeMinutes = basicMembership.getFreeMinutesPerMonth();
@@ -163,16 +165,101 @@ public class BikeTypeMembershipBasicTest {
         double discount = actualCost * basicMembership.getDiscountRate();
         double finalCost = actualCost - discount;
 
-        assertEquals(51.00, finalCost, 0.01,
-                "Ride cost should be correctly calculated with PREMIUM membership and ELECTRIC bike");
+        assertEquals(0, finalCost, 0.01,
+                "Ride cost should be correctly calculated with VIP membership and STANDARD bike");
     }
 
+    @Test
+    @DisplayName ("calculate cost")
+    void edgeCasesCalculateCostForRideWithPremiumMembership() {
+       // Arrange - Set up test data
+        MembershipType basicMembership = MembershipType.PREMIUM;
+        BikeType standardBike = BikeType.STANDARD;
+        int exactFreeRideMinutes = 60;
+
+        // Act - Calculate cost using both classes
+        int freeMinutes = basicMembership.getFreeMinutesPerMonth();
+        double bikeRate = standardBike.getPricePerMinute();
+        int chargeableMinutes = Math.max(0, exactFreeRideMinutes - freeMinutes);
+        double actualCost = chargeableMinutes * bikeRate;
+         double discount = actualCost * basicMembership.getDiscountRate();
+        double finalCost = actualCost - discount;
+
+        assertEquals(0, finalCost, 0.01,
+                "Ride cost should be correctly calculated with PREMIUM membership and STANDARD bike");
+    }
+    
+   
+    @Test
+    @DisplayName ("calculate cost")
+    void edgeCasesCalculateCostRightOverPremium(){
+
+        // Arrange - Set up test data
+        MembershipType basicMembership = MembershipType.PREMIUM;
+        BikeType standardBike = BikeType.STANDARD;
+        int exactFreeRideMinutes = 61;
+
+        // Act - Calculate cost using both classes
+        int freeMinutes = basicMembership.getFreeMinutesPerMonth();
+        double bikeRate = standardBike.getPricePerMinute();
+        int chargeableMinutes = Math.max(0, exactFreeRideMinutes - freeMinutes);
+        double actualCost = chargeableMinutes * bikeRate;
+         double discount = actualCost * basicMembership.getDiscountRate();
+        double finalCost = actualCost - discount;
+
+        assertEquals(0.425, finalCost, 0.01,
+        "Ride cost should be right over 0 with PREMIUM membership and STANDARD bike");
+    }
+
+@Test
+    @DisplayName ("calculate cost")
+    void edgeCasesCalculateCostRightOverVip(){
+
+        // Arrange - Set up test data
+        MembershipType basicMembership = MembershipType.VIP;
+        BikeType standardBike = BikeType.STANDARD;
+        int exactFreeRideMinutes = 121;
+
+        // Act - Calculate cost using both classes
+        int freeMinutes = basicMembership.getFreeMinutesPerMonth();
+        double bikeRate = standardBike.getPricePerMinute();
+        int chargeableMinutes = Math.max(0, exactFreeRideMinutes - freeMinutes);
+        double actualCost = chargeableMinutes * bikeRate;
+         double discount = actualCost * basicMembership.getDiscountRate();
+        double finalCost = actualCost - discount;
+
+        assertEquals(0.375, finalCost, 0.01,
+        "Ride cost should be right over 0");
+    }
+
+    
+    
+    
+    
     // TODO: Test different input values - Add tests for expensive bike types with
     // different memberships
     // Hint: Test how CARGO bike (most expensive) costs differ across membership
     // types
+    @ParameterizedTest(name = "Cargo")
+    @CsvSource({
+    "BASIC,     30, 36.00",
+    "PREMIUM,   30, 30.60",
+    "VIP,       30, 27.00",
+    "STUDENT,   30, 28.80",
+    "CORPORATE, 30, 32.40"
+    })
+
+    void cargoPricingAcrossMemberships(MembershipType type, int minutes, double expected) {
+    double pricePerMinute = BikeType.CARGO.getPricePerMinute(); 
+    double actual = pricePerMinute * minutes * (1 - type.getDiscountRate());
+    assertEquals(expected, actual, 0.0001);
+}
+
+}
+   
+    
+    
 
     // TODO: Optional - Create helper method to calculate ride costs
     // Hint: private double calculateRideCost(MembershipType membership, BikeType
     // bikeType, int minutes)
-}
