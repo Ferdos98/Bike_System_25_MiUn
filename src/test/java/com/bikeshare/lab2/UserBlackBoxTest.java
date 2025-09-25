@@ -15,9 +15,12 @@ import java.lang.reflect.Member;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import com.bikeshare.model.User;
-import com.bikeshare.model.User.MembershipType;
+// import com.bikeshare.model.User.MembershipType;
+import com.bikeshare.model.MembershipType;
 
 /**
  * Lab 2 Template: Black Box Testing for User class
@@ -322,17 +325,69 @@ class UserBlackBoxTest {
         assertEquals(0.0, user.calculateDiscount(), "Basic ska inte ge rabatt");
     }
 
+    // @Test
+    // void basicShouldNotGetFreeMinutes() {
+    // // User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos",
+    // "khalili");
+    // MembershipType membershipType = MembershipType.BASIC;
+
+    // // user.getMembershipType();
+    // int freeMinutes = membershipType.BASIC.getFreeMinutesPerRide();
+
+    // assertEquals(60, freeMinutes, "Basic ska inte ge gratis minuter");
+    // //Rapport
+    // }
+
     @Test
-    void basicShouldNotGetFreeMinutes() {
-        // User user = new User("901101-1237", "ferdos_98@hotmail.se", "ferdos",
-        // "khalili");
-        MembershipType membershipType = MembershipType.BASIC;
+    @DisplayName("Basic should give 0% discount")
+    void basic_hasZeroDiscount() {
 
-        // user.getMembershipType();
-        int freeMinutes = membershipType.BASIC.getFreeMinutesPerRide();
+        Double discount = MembershipType.BASIC.getDiscountRate();
+        assertEquals(0, discount);
+    }
 
-        assertEquals(60, freeMinutes, "Basic ska inte ge gratis minuter");
-        // Rapport
+    @Test
+    @DisplayName("Premium should give 15% discount")
+    void premiumDiscount() {
+
+        Double discount = MembershipType.PREMIUM.getDiscountRate();
+        assertEquals(0.15, discount);
+    }
+
+    @Test
+    @DisplayName("vip should give 25% discount")
+    void vipDiscount() {
+
+        Double discount = MembershipType.VIP.getDiscountRate();
+        assertEquals(0.25, discount);
+    }
+
+    @Test
+    @DisplayName("Student should give 20% discount")
+    void studentDiscount() {
+
+        Double discount = MembershipType.STUDENT.getDiscountRate();
+        assertEquals(0.20, discount);
+    }
+
+    @Test
+    @DisplayName("corporate should give 10% discount")
+    void corporateDiscount() {
+
+        Double discount = MembershipType.CORPORATE.getDiscountRate();
+        assertEquals(0.10, discount);
+    }
+
+    @ParameterizedTest(name = "{0} should give {1} discount")
+    @CsvSource({
+            "BASIC, 0.00",
+            "PREMIUM, 0.15",
+            "VIP, 0.25",
+            "STUDENT, 0.20",
+            "CORPORATE, 0.10"
+    })
+    void membershipDiscounts(MembershipType type, double expected) {
+        assertEquals(expected, type.getDiscountRate(), 0.0001);
     }
 }
 
